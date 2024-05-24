@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id    String     @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  items FoodItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@map("category")
+}
+
+model Type {
+  id    String     @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  items FoodItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@map("type")
+}
+
+model FoodItem {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image_url   String
+  category_id String  @db.ObjectId
+  type_id     String? @db.ObjectId
+  price       Int
+
+  category Category @relation(fields: [category_id], references: [id])
+  type     Type?    @relation(fields: [type_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@map("food_item")
+}
